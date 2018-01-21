@@ -1,6 +1,6 @@
 # wordcodes
 
-Clone down the repo\
+Clone down the repo
 
 From the main directory:\
 Run ```npm install```\
