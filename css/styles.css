@@ -1,0 +1,22 @@
+.text-center {
+    text-align: center;
+}
+
+.game-board {
+    margin: auto;
+    border-spacing: 25px;
+}
+
+.card {
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 100px;
+    width: 200px;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    background-color: beige;
+}
+.card:hover {
+    opacity: 0.4;
+}
