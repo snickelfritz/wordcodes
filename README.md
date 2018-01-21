@@ -3,5 +3,6 @@
 Clone down the repo\
 Run ```npm install```\
 Run ```npm run webpack```
+From the main directory, run ```node server/server.js```
 
-Go to file:///{{ path to wordcodes }}/wordcodes/index.html
+Open a browser and navigate to localhost:8080
