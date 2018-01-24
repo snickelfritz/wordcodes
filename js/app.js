@@ -4,6 +4,7 @@ var createReactClass = require('create-react-class');
 import { Board } from './board.js'
 import { Header } from './header.js'
 import { Button } from './button.js'
+import { makeApiRequest } from './api_requests.js'
 
 
 var Body = createReactClass({
@@ -16,18 +17,17 @@ var Body = createReactClass({
     createNewGame: function() {
         var componentThis = this;
 
-        fetch("/api/game/create", {method: "post"})
-        .then(function(data) {
-            data.json()
-            .then(function(jsonData) {
-                componentThis.setState({wordList: jsonData.wordList});
-            })
-            .catch(function(jsonError) {
-                console.log(jsonError);
-            });
-        }, function(error) {
+        var url = "/api/game/create";
+        var method = "post";
+        var params = {};
+        var onSuccess = function(data) {
+            componentThis.setState({wordList: data.wordList});
+        };
+        var onError = function(error) {
             console.log(error);
-        });
+        };
+
+        makeApiRequest(url, method, params, onSuccess, onError);
     },
 
     render: function() {
