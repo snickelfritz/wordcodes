@@ -6,7 +6,7 @@ var createGameHandler = async function(req, res, next) {
     gameObj = await gameObj.save();
 
     var isCodeMaster = true;
-    res.send(gameObj.toApiJSON(isMaster));
+    res.send(gameObj.toApiJSON(isCodeMaster));
 };
 
 module.exports = {

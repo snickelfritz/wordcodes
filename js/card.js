@@ -3,11 +3,10 @@ var createReactClass = require('create-react-class');
 
 var Card = createReactClass({
     render: function() {
-        var word = this.props.word;
-        var cardNum = this.props.cardNum;
+        var cardData = this.props.cardData;
 
         return (
-            <td className="card">{word}</td>
+            <td className="card">{cardData.word}</td>
         );
     }
 });

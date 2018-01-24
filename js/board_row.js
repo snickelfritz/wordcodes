@@ -4,8 +4,8 @@ import { Card } from './card.js'
 
 var BoardRow = createReactClass({
     render: function() {
-        var wordListHtml = this.props.wordList.map(function(word) {
-            return (<Card key={word} word={word}/>);
+        var wordListHtml = this.props.wordList.map(function(cardData) {
+            return (<Card key={cardData.word} cardData={cardData}/>);
         });
 
         return (
