@@ -11,6 +11,40 @@ var CARD_TYPES = {
 var Game = function() {
     this.gameId = null;
     this.clueHistory = [];
+    this.createDate = null;
+    this.startingTeam = null;
+    this.wordList = [];
+    this.assignments = {};
+};
+
+Game.load = async function(gameId) {
+    var gameData = null;
+    var gameObj = null;
+    try {
+        gameData = await firebase.read("games", gameId);
+    }
+    catch (error) {
+        console.log(error);
+        gameData = null;
+    }
+
+    if (gameData) {
+        gameData = gameData.val();
+        gameObj = new Game();
+
+        for (var key in gameData) {
+            gameObj[key] = gameData[key];
+        }
+    }
+
+    return gameObj;
+};
+
+Game.prototype.init = function() {
+    if (this.gameId) {
+        throw new Error("Can't init already saved game")
+    }
+
     this.startingTeam = pickStartingTeam();
     this.wordList = generateWordList();
     this.assignments = generateAssignments(this.startingTeam);
