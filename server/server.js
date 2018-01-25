@@ -10,6 +10,7 @@ app.get("/", function(req, res, next) {
     res.sendFile(filePath);
 });
 
+app.get("/api/game", gameHandler.getGameHandler);
 app.post("/api/game/create", gameHandler.createGameHandler);
 
 app.listen(8080);
