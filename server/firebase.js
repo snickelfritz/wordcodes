@@ -26,7 +26,6 @@ firebaseRequests.create = async function(table, dataJSON) {
 firebaseRequests.read = async function(table, uid) {
     var readPath = table + "/" + uid;
 
-    console.log(readPath);
     var result = await ref.child(readPath).once('value');
     return result;
 };
