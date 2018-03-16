@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-// var gameHandler = require('./handlers/game_handler');
+var gameHandler = require('./handlers/game_handler');
 // var firebaseRequests = require('./firebase.js');
 // var firebase = require('firebase');
 var app = express();
@@ -21,7 +21,7 @@ app.get("/", function(req, res, next) {
     res.sendFile(filePath);
 });
 
-// app.get("/api/game", gameHandler.getGameHandler);
-// app.post("/api/game/create", gameHandler.createGameHandler);
+app.get("/api/game", gameHandler.getGameHandler);
+app.post("/api/game/create", gameHandler.createGameHandler);
 
 app.listen(8080);

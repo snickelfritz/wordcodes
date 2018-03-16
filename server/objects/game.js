@@ -1,5 +1,5 @@
-var wordData = require('../words.json');
-var firebase = require('../firebase')
+var wordData = require('../words.json')
+var firebaseRequests = require('../firebase.js')
 
 var CARD_TYPES = {
     RED: "red",
@@ -21,7 +21,7 @@ Game.load = async function(gameId) {
     var gameData = null;
     var gameObj = null;
     try {
-        gameData = await firebase.read("games", gameId);
+        gameData = await firebaseRequests.read("games", gameId);
     }
     catch (error) {
         console.log(error);
@@ -56,7 +56,7 @@ Game.prototype.save = async function() {
     if (this.gameId) {
         // Update the existing game object
     } else {
-        var result = await firebase.create("games", this.toFirebaseJSON());
+        var result = await firebaseRequests.create("games", this.toFirebaseJSON());
         this.gameId = result.key;
     }
 
