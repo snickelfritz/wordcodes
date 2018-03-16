@@ -16,14 +16,7 @@ var App = createReactClass({
   componentWillMount: function() {
     var componentThis = this;
     firebase.auth().onAuthStateChanged( (user) => {
-      console.log(user);
-      // console.log(!!user);
       this.setState({logged_in: !!user});
-      // if (user) {
-      //   componentThis.setState({logged_in: true});
-      // } else {
-      //   componentThis.setState({logged_in: false});
-      // };
     } );
   },
   
@@ -37,7 +30,7 @@ var App = createReactClass({
 
     return (
       <div>
-        <Header>Word Codes</Header>
+        <Header title="Word Codes"/>
         {Body}
       </div>
     )
