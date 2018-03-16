@@ -30,4 +30,19 @@ firebaseRequests.read = async function(table, uid) {
     return result;
 };
 
+firebaseRequests.verifyIdToken = async function(idToken) {
+  return await auth.verifyIdToken(idToken);
+    // .then(function(decodedToken) {
+    //   console.log("Decoded token: ", decodedToken);
+    //   return true;
+    //   // var uid = decodedToken.uid;
+    //   // ...
+    // }).catch(function(error) {
+    //   // Handle error
+    //   // TODO
+    //   console.log("Invalid token\n")
+    //   return false;
+    // });
+}
+
 module.exports = firebaseRequests;
