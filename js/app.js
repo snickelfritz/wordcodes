@@ -21,8 +21,8 @@ var App = createReactClass({
     firebase.auth().onAuthStateChanged( (user) => {
       this.setState({logged_in: !!user});
       if (user) {
-        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true)
-        // firebase.auth().currentUser.getIdToken(false)
+        // firebase.auth().currentUser.getIdToken(#<{(| forceRefresh |)}># true)
+        firebase.auth().currentUser.getIdToken(false)
           .then(function(idToken) {
             cookies.set('JWT', idToken);
           }).catch(function(error) {
