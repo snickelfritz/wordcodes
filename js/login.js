@@ -1,10 +1,10 @@
 var React = require('react');
 var createReactClass = require('create-react-class');
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth.js';
+import firebase from './firebase.js'
+// import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth.js';
 
 var Login = createReactClass({
-  render: () => {
-    console.log(this.props);
+  render: function() {
     // FirebaseUI config.
     const uiConfig = {
       signInSuccessUrl: '/',
@@ -23,7 +23,8 @@ var Login = createReactClass({
     };
 
     return (
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={this.props.auth}/>
+      // <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={this.props.auth}/>
+      <div>Login</div>
     );
   }
 });

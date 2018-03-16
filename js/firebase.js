@@ -1,17 +1,13 @@
 var firebase = require('firebase');
 
-console.log("Before init: ", firebase);
-const config = {
+var config = {
   apiKey: "AIzaSyAOHzp5vptrT9Y1H8NsZ9sKhYLvABKkDLw",
   authDomain: "wordcodes-731c6.firebaseapp.com",
   databaseURL: "https://wordcodes-731c6.firebaseio.com",
   projectId: "wordcodes-731c6",
+  storageBucket: "wordcodes-731c6.appspot.com",
+  messagingSenderId: "265948614939",
 };
-
 firebase.initializeApp(config);
-console.log("After init: ", firebase);
 
-const auth = firebase.auth();
-console.log(auth);
-
-export { firebase, auth };
+export default firebase;
