@@ -12,7 +12,7 @@ var makeApiRequest = function(url, method, params, onSuccessFn, onErrorFn) {
     }
     requestUrl = requestUrl.slice(0, -1); // either need to chop off the ? or a & at the end
 
-    return fetch(requestUrl, {method: method})
+    return fetch(requestUrl, {method: method, credentials: 'include'})
         .then(function(data) {
             data.json()
             .then(function(jsonData) {
