@@ -4,10 +4,7 @@ var createReactClass = require('create-react-class');
 import { Header } from './header.js'
 import { Login } from './login.js'
 import { Dashboard } from './dashboard.js'
-import firebase from './firebase.js'
-
-var auth = firebase.auth();
-console.log(auth);
+import { firebase, auth } from './firebase.js'
 
 var logged_in = false;
 auth.onAuthStateChanged( (user) => {

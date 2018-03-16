@@ -1,8 +1,8 @@
 var express = require('express');
 var path = require('path');
 var gameHandler = require('./handlers/game_handler');
-var firebaseRequests = require('./firebase.js');
-var firebase = require('firebase');
+// var firebaseRequests = require('./firebase.js');
+// var firebase = require('firebase');
 var app = express();
 
 // app.use(function(req, res, next) {
