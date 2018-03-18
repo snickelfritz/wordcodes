@@ -1,5 +1,4 @@
 var Game = require('../objects/game');
-var firebase = require('../firebase');
 
 var gameHandler = {};
 
