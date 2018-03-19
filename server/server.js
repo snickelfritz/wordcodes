@@ -16,22 +16,22 @@ app.get("/", function(req, res, next) {
     res.sendFile(filePath);
 });
 
-app.use(function(req, res, next) {
-  const cookies = new Cookies(req.headers.cookie);
-  console.log(req.headers);
-  var idToken = cookies.get('JWT');
-  console.log(idToken);
-  if(idToken) {
-    if(firebaseRequests.verifyIdToken(idToken)) {
-      next();
-    } else {
-      console.log("Error--invalid JWT");
-      res.redirect('/')
+var authMiddleware = async function(req, res, next) {
+    const cookies = new Cookies(req.headers.cookie);
+    const idToken = cookies.get('JWT');
+    if (idToken) {
+        const tokenData = await firebaseRequests.verifyIdToken(idToken);
+        if (tokenData) {
+            res.locals.uid = tokenData.uid;
+            next();
+        } else {
+            console.log("Error--invalid JWT");
+            res.redirect('/')
+        }
     }
-  }
-});
+};
 
-app.get("/api/game", gameHandler.getGameHandler);
-app.post("/api/game/create", gameHandler.createGameHandler);
+app.get("/api/game", authMiddleware, gameHandler.getGameHandler);
+app.post("/api/game/create", authMiddleware, gameHandler.createGameHandler);
 
 app.listen(8080);
