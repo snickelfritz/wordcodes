@@ -31,18 +31,8 @@ firebaseRequests.read = async function(table, uid) {
 };
 
 firebaseRequests.verifyIdToken = async function(idToken) {
-  return await auth.verifyIdToken(idToken);
-    // .then(function(decodedToken) {
-    //   console.log("Decoded token: ", decodedToken);
-    //   return true;
-    //   // var uid = decodedToken.uid;
-    //   // ...
-    // }).catch(function(error) {
-    //   // Handle error
-    //   // TODO
-    //   console.log("Invalid token\n")
-    //   return false;
-    // });
-}
+    var tokenData = await auth.verifyIdToken(idToken);
+    return tokenData;
+};
 
 module.exports = firebaseRequests;
