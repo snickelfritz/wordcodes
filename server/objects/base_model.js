@@ -47,3 +47,5 @@ class BaseModel {
         return this;
     }
 }
+
+module.exports = BaseModel;

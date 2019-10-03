@@ -1,8 +1,9 @@
 "use strict";
 
-var wordData = require('../words.json')
+const wordData = require('../words.json')
+const BaseModel = require('../objects/base_model')
 
-var CARD_TYPES = {
+const CARD_TYPES = {
     RED: "red",
     BLUE: "blue",
     ASSASSIN: "assassin",
@@ -48,9 +49,9 @@ class Game extends BaseModel {
     }
 
     assignUser(userId) {
-        var openRoles = [];
+        let openRoles = [];
 
-        for (var key in this.userAssignments) {
+        for (let key in this.userAssignments) {
             if (this.userAssignments[key] !== null) {
                 openRoles.push(key);
             }
@@ -60,13 +61,13 @@ class Game extends BaseModel {
             throw new Error("Game is full.");
         }
 
-        var randomIndex = Math.floor(Math.random() * openRoles.length);
-        var userRole = openRoles[randomIndex];
+        const randomIndex = Math.floor(Math.random() * openRoles.length);
+        const userRole = openRoles[randomIndex];
         this.userAssignments[userRole] = userId;
     }
 
     toFirebaseJSON() {
-        var firebaseJSON = {
+        const firebaseJSON = {
             "startingTeam": this.startingTeam,
             "assignments": this.assignments,
             "wordList": this.wordList,
@@ -78,16 +79,16 @@ class Game extends BaseModel {
     }
 
     toApiJSON(isCodeMaster) {
-        var data = {
+        let data = {
             "wordList": this.wordList,
             "clueHistory": this.clueHistory,
             "startingTeam": this.startingTeam
         };
 
         if (isCodeMaster) {
-            for (var i = 0; i < this.wordList.length; i++) {
-                var indexString = "" + i;
-                var item = data.wordList[i];
+            for (let i = 0; i < this.wordList.length; i++) {
+                const indexString = "" + i;
+                let item = data.wordList[i];
 
                 if (this.assignments.assassin === indexString) {
                     item["type"] = CARD_TYPES.ASSASSIN;
@@ -114,9 +115,9 @@ var pickStartingTeam = function() {
 };
 
 var generateAssignments = function(startingTeam) {
-    var setTeamCards = function(cardObject, desiredLength) {
+    let setTeamCards = function(cardObject, desiredLength) {
         while (Object.keys(cardObject).length < desiredLength) {
-            var randomIndex = Math.floor(Math.random() * 25);
+            const randomIndex = Math.floor(Math.random() * 25);
             if (!usedIndices[randomIndex]) {
                 cardObject[randomIndex] = true;
                 usedIndices[randomIndex] = true;
@@ -124,20 +125,20 @@ var generateAssignments = function(startingTeam) {
         }
     };
 
-    var redCards = {};
-    var blueCards = {};
+    let redCards = {};
+    let blueCards = {};
 
-    var redLength = 8;
-    var blueLength = 8;
+    let redLength = 8;
+    let blueLength = 8;
     if (startingTeam === "red") {
         redLength = 9;
     } else {
         blueLength = 9;
     }
 
-    var usedIndices = {};
-    var randomIndex = Math.floor(Math.random() * 25);
-    var assassinCard = randomIndex;
+    let usedIndices = {};
+    const randomIndex = Math.floor(Math.random() * 25);
+    const assassinCard = randomIndex;
     usedIndices[randomIndex] = true;
     setTeamCards(redCards, redLength);
     setTeamCards(blueCards, blueLength);
@@ -150,18 +151,18 @@ var generateAssignments = function(startingTeam) {
 };
 
 var generateWordList = function() {
-    var wordList = [];
+    let wordList = [];
 
-    var fullList = wordData["list_1"].concat(wordData["list_2"]);
+    const fullList = wordData["list_1"].concat(wordData["list_2"]);
 
-    var usedIndices = {};
+    let usedIndices = {};
     while (Object.keys(usedIndices).length < 25) {
-        var randomIndex = Math.floor(Math.random() * fullList.length);
+        const randomIndex = Math.floor(Math.random() * fullList.length);
         if (!usedIndices[randomIndex]) {
-            var tuple = fullList[randomIndex];
-            var randomSide = Math.floor(Math.random() * 2);
+            const tuple = fullList[randomIndex];
+            const randomSide = Math.floor(Math.random() * 2);
 
-            var item = {"word": tuple[randomSide]};
+            const item = {"word": tuple[randomSide]};
             wordList.push(item);
             usedIndices[randomIndex] = true;
         }
