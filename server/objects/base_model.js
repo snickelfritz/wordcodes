@@ -40,7 +40,7 @@ class BaseModel {
         if (this.id) {
             // Update the existing game object
         } else {
-            var result = await firebaseRequests.create(firebaseTable, this.toFirebaseJSON());
+            const result = await firebaseRequests.create(firebaseTable, this.toFirebaseJSON());
             this.id = result.key;
         }
 
