@@ -9,12 +9,25 @@ var CARD_TYPES = {
 };
 
 var Game = function() {
-    this.gameId = null;
-    this.clueHistory = [];
+    this.id = null;
     this.createDate = null;
+
+    // Store the history of given clues so players can go back and see them later on.
+    this.clueHistory = [];
+
     this.startingTeam = null;
     this.wordList = [];
+
+    // The card assignments for each team (and for the assassin).
     this.assignments = {};
+
+    // Player assignments for the four roles
+    this.userAssignments = {
+        "blueMaster": null,
+        "blueGuesser": null,
+        "redMaster": null,
+        "redGuesser": null
+    };
 };
 
 Game.load = async function(gameId) {
@@ -40,24 +53,44 @@ Game.load = async function(gameId) {
     return gameObj;
 };
 
-Game.prototype.init = function() {
-    if (this.gameId) {
+Game.prototype.assignUser = function(userId) {
+    var openRoles = [];
+
+    for (var key in this.userAssignments) {
+        if (this.userAssignments[key] !== null) {
+            openRoles.push(key);
+        }
+    }
+
+    if (openRoles.length === 0) {
+        throw new Error("Game is full.");
+    }
+
+    var randomIndex = Math.floor(Math.random() * openRoles.length);
+    var userRole = openRoles[randomIndex];
+    this.userAssignments[userRole] = userId;
+};
+
+Game.prototype.init = function(authorId) {
+    if (this.id) {
         throw new Error("Can't init already saved game")
     }
 
     this.startingTeam = pickStartingTeam();
     this.wordList = generateWordList();
     this.assignments = generateAssignments(this.startingTeam);
+
+    this.assignUser(authorId);
 };
 
 Game.prototype.save = async function() {
     var result = null;
 
-    if (this.gameId) {
+    if (this.id) {
         // Update the existing game object
     } else {
         var result = await firebaseRequests.create("games", this.toFirebaseJSON());
-        this.gameId = result.key;
+        this.id = result.key;
     }
 
     return this;
