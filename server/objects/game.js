@@ -1,7 +1,6 @@
 "use strict";
 
 var wordData = require('../words.json')
-var firebaseRequests = require('../firebase.js')
 
 var CARD_TYPES = {
     RED: "red",
@@ -10,10 +9,9 @@ var CARD_TYPES = {
     CIVILIAN: "civilian"
 };
 
-class Game {
+class Game extends BaseModel {
     constructor() {
-        this.id = null;
-        this.createDate = null;
+        super();
 
         // Store the history of given clues so players can go back and see them later on.
         this.clueHistory = [];
@@ -33,40 +31,8 @@ class Game {
         };
     }
 
-    static async load(gameId) {
-        var gameData = null;
-        var gameObj = null;
-        try {
-            gameData = await firebaseRequests.read("games", gameId);
-        }
-        catch (error) {
-            console.log(error);
-            gameData = null;
-        }
-
-        if (gameData) {
-            gameData = gameData.val();
-            gameObj = new Game();
-
-            for (var key in gameData) {
-                gameObj[key] = gameData[key];
-            }
-        }
-
-        return gameObj;
-    }
-
-    async save() {
-        var result = null;
-
-        if (this.id) {
-            // Update the existing game object
-        } else {
-            var result = await firebaseRequests.create("games", this.toFirebaseJSON());
-            this.id = result.key;
-        }
-
-        return this;
+    getFirebaseTable() {
+        return "games";
     }
 
     init(authorId) {
