@@ -11,10 +11,6 @@ var app = express();
 app.use("/static", express.static(path.join(__dirname, "/../public")))
 
 app.use(expressLogging(logger));
-app.get("/", function(req, res, next) {
-    var filePath = path.join(__dirname + "/../index.html");
-    res.sendFile(filePath);
-});
 
 var authMiddleware = async function(req, res, next) {
     const cookies = new Cookies(req.headers.cookie);
@@ -33,5 +29,10 @@ var authMiddleware = async function(req, res, next) {
 
 app.get("/api/game", authMiddleware, gameHandler.getGameHandler);
 app.post("/api/game/create", authMiddleware, gameHandler.createGameHandler);
+
+app.get("/", function(req, res, next) {
+    var filePath = path.join(__dirname + "/../index.html");
+    res.sendFile(filePath);
+});
 
 app.listen(8080);
