@@ -3,8 +3,10 @@ var Game = require('../objects/game');
 var gameHandler = {};
 
 gameHandler.createGameHandler = async function(req, res, next) {
+    var authorId = res.locals.uid;
+
     var gameObj = new Game();
-    gameObj.init();
+    gameObj.init(authorId);
     gameObj = await gameObj.save();
 
     var isCodeMaster = true;

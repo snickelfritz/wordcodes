@@ -1,140 +1,111 @@
-var wordData = require('../words.json')
-var firebaseRequests = require('../firebase.js')
+"use strict";
 
-var CARD_TYPES = {
+const wordData = require('../words.json')
+const BaseModel = require('../objects/base_model')
+
+const CARD_TYPES = {
     RED: "red",
     BLUE: "blue",
     ASSASSIN: "assassin",
     CIVILIAN: "civilian"
 };
 
-var Game = function() {
-    this.id = null;
-    this.createDate = null;
+class Game extends BaseModel {
+    constructor() {
+        super();
 
-    // Store the history of given clues so players can go back and see them later on.
-    this.clueHistory = [];
+        // Store the history of given clues so players can go back and see them later on.
+        this.clueHistory = [];
 
-    this.startingTeam = null;
-    this.wordList = [];
+        this.startingTeam = null;
+        this.wordList = [];
 
-    // The card assignments for each team (and for the assassin).
-    this.assignments = {};
+        // The card assignments for each team (and for the assassin).
+        this.assignments = {};
 
-    // Player assignments for the four roles
-    this.userAssignments = {
-        "blueMaster": null,
-        "blueGuesser": null,
-        "redMaster": null,
-        "redGuesser": null
-    };
-};
-
-Game.load = async function(gameId) {
-    var gameData = null;
-    var gameObj = null;
-    try {
-        gameData = await firebaseRequests.read("games", gameId);
-    }
-    catch (error) {
-        console.log(error);
-        gameData = null;
+        // Player assignments for the four roles
+        this.userAssignments = {
+            "blueMaster": null,
+            "blueGuesser": null,
+            "redMaster": null,
+            "redGuesser": null
+        };
     }
 
-    if (gameData) {
-        gameData = gameData.val();
-        gameObj = new Game();
+    getFirebaseTable() {
+        return "games";
+    }
 
-        for (var key in gameData) {
-            gameObj[key] = gameData[key];
+    init(authorId) {
+        if (this.id) {
+            throw new Error("Can't init already saved game")
         }
+
+        this.startingTeam = pickStartingTeam();
+        this.wordList = generateWordList();
+        this.assignments = generateAssignments(this.startingTeam);
+        this.assignUser(authorId);
     }
 
-    return gameObj;
-};
+    assignUser(userId) {
+        let openRoles = [];
 
-Game.prototype.assignUser = function(userId) {
-    var openRoles = [];
-
-    for (var key in this.userAssignments) {
-        if (this.userAssignments[key] !== null) {
-            openRoles.push(key);
-        }
-    }
-
-    if (openRoles.length === 0) {
-        throw new Error("Game is full.");
-    }
-
-    var randomIndex = Math.floor(Math.random() * openRoles.length);
-    var userRole = openRoles[randomIndex];
-    this.userAssignments[userRole] = userId;
-};
-
-Game.prototype.init = function(authorId) {
-    if (this.id) {
-        throw new Error("Can't init already saved game")
-    }
-
-    this.startingTeam = pickStartingTeam();
-    this.wordList = generateWordList();
-    this.assignments = generateAssignments(this.startingTeam);
-
-    this.assignUser(authorId);
-};
-
-Game.prototype.save = async function() {
-    var result = null;
-
-    if (this.id) {
-        // Update the existing game object
-    } else {
-        var result = await firebaseRequests.create("games", this.toFirebaseJSON());
-        this.id = result.key;
-    }
-
-    return this;
-};
-
-Game.prototype.toFirebaseJSON = function() {
-    var firebaseJSON = {
-        "startingTeam": this.startingTeam,
-        "assignments": this.assignments,
-        "wordList": this.wordList,
-        "clueHistory": this.clueHistory
-    };
-
-    return firebaseJSON;
-};
-
-Game.prototype.toApiJSON = function(isCodeMaster) {
-    var data = {
-        "wordList": this.wordList,
-        "clueHistory": this.clueHistory,
-        "startingTeam": this.startingTeam
-    };
-
-    if (isCodeMaster) {
-        for (var i = 0; i < this.wordList.length; i++) {
-            var indexString = "" + i;
-            var item = data.wordList[i];
-
-            if (this.assignments.assassin === indexString) {
-                item["type"] = CARD_TYPES.ASSASSIN;
-            } else if (this.assignments.red[indexString]) {
-                item["type"] = CARD_TYPES.RED;
-            } else if (this.assignments.blue[indexString]) {
-                item["type"] = CARD_TYPES.BLUE;
-            } else {
-                item["type"] = CARD_TYPES.CIVILIAN;
+        for (let [roleName, userId] of Object.entries(this.userAssignments)) {
+            if (userId === null) {
+                openRoles.push(roleName);
             }
         }
+
+        if (openRoles.length === 0) {
+            throw new Error("Game is full.");
+        }
+
+        const randomIndex = Math.floor(Math.random() * openRoles.length);
+        const userRole = openRoles[randomIndex];
+        this.userAssignments[userRole] = userId;
     }
 
-    return data;
+    toFirebaseJSON() {
+        const firebaseJSON = {
+            "startingTeam": this.startingTeam,
+            "assignments": this.assignments,
+            "wordList": this.wordList,
+            "clueHistory": this.clueHistory,
+            "userAssignments": this.userAssignments
+        };
+
+        return firebaseJSON;
+    }
+
+    toApiJSON(isCodeMaster) {
+        let data = {
+            "wordList": this.wordList,
+            "clueHistory": this.clueHistory,
+            "startingTeam": this.startingTeam
+        };
+
+        if (isCodeMaster) {
+            for (let i = 0; i < this.wordList.length; i++) {
+                const indexString = "" + i;
+                let item = data.wordList[i];
+
+                if (this.assignments.assassin === indexString) {
+                    item["type"] = CARD_TYPES.ASSASSIN;
+                } else if (this.assignments.red[indexString]) {
+                    item["type"] = CARD_TYPES.RED;
+                } else if (this.assignments.blue[indexString]) {
+                    item["type"] = CARD_TYPES.BLUE;
+                } else {
+                    item["type"] = CARD_TYPES.CIVILIAN;
+                }
+            }
+        }
+
+        return data;
+    }
 };
 
-var pickStartingTeam = function() {
+let pickStartingTeam = function() {
     if (Math.random() < 0.5) {
         return "red";
     }
@@ -142,10 +113,10 @@ var pickStartingTeam = function() {
     return "blue";
 };
 
-var generateAssignments = function(startingTeam) {
-    var setTeamCards = function(cardObject, desiredLength) {
+let generateAssignments = function(startingTeam) {
+    let setTeamCards = function(cardObject, desiredLength) {
         while (Object.keys(cardObject).length < desiredLength) {
-            var randomIndex = Math.floor(Math.random() * 25);
+            const randomIndex = Math.floor(Math.random() * 25);
             if (!usedIndices[randomIndex]) {
                 cardObject[randomIndex] = true;
                 usedIndices[randomIndex] = true;
@@ -153,20 +124,20 @@ var generateAssignments = function(startingTeam) {
         }
     };
 
-    var redCards = {};
-    var blueCards = {};
+    let redCards = {};
+    let blueCards = {};
 
-    var redLength = 8;
-    var blueLength = 8;
+    let redLength = 8;
+    let blueLength = 8;
     if (startingTeam === "red") {
         redLength = 9;
     } else {
         blueLength = 9;
     }
 
-    var usedIndices = {};
-    var randomIndex = Math.floor(Math.random() * 25);
-    var assassinCard = randomIndex;
+    let usedIndices = {};
+    const randomIndex = Math.floor(Math.random() * 25);
+    const assassinCard = randomIndex;
     usedIndices[randomIndex] = true;
     setTeamCards(redCards, redLength);
     setTeamCards(blueCards, blueLength);
@@ -178,19 +149,19 @@ var generateAssignments = function(startingTeam) {
     };
 };
 
-var generateWordList = function() {
-    var wordList = [];
+let generateWordList = function() {
+    let wordList = [];
 
-    var fullList = wordData["list_1"].concat(wordData["list_2"]);
+    const fullList = wordData["list_1"].concat(wordData["list_2"]);
 
-    var usedIndices = {};
+    let usedIndices = {};
     while (Object.keys(usedIndices).length < 25) {
-        var randomIndex = Math.floor(Math.random() * fullList.length);
+        const randomIndex = Math.floor(Math.random() * fullList.length);
         if (!usedIndices[randomIndex]) {
-            var tuple = fullList[randomIndex];
-            var randomSide = Math.floor(Math.random() * 2);
+            const tuple = fullList[randomIndex];
+            const randomSide = Math.floor(Math.random() * 2);
 
-            var item = {"word": tuple[randomSide]};
+            const item = {"word": tuple[randomSide]};
             wordList.push(item);
             usedIndices[randomIndex] = true;
         }
