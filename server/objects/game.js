@@ -51,7 +51,7 @@ class Game extends BaseModel {
         let openRoles = [];
 
         for (let [roleName, userId] of Object.entries(this.userAssignments)) {
-            if (userId !== null) {
+            if (userId === null) {
                 openRoles.push(roleName);
             }
         }
