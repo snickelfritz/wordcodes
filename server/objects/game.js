@@ -44,16 +44,15 @@ class Game extends BaseModel {
         this.startingTeam = pickStartingTeam();
         this.wordList = generateWordList();
         this.assignments = generateAssignments(this.startingTeam);
-
         this.assignUser(authorId);
     }
 
     assignUser(userId) {
         let openRoles = [];
 
-        for (let key in this.userAssignments) {
-            if (this.userAssignments[key] !== null) {
-                openRoles.push(key);
+        for (let [roleName, userId] of Object.entries(this.userAssignments)) {
+            if (userId !== null) {
+                openRoles.push(roleName);
             }
         }
 
@@ -106,7 +105,7 @@ class Game extends BaseModel {
     }
 };
 
-var pickStartingTeam = function() {
+let pickStartingTeam = function() {
     if (Math.random() < 0.5) {
         return "red";
     }
@@ -114,7 +113,7 @@ var pickStartingTeam = function() {
     return "blue";
 };
 
-var generateAssignments = function(startingTeam) {
+let generateAssignments = function(startingTeam) {
     let setTeamCards = function(cardObject, desiredLength) {
         while (Object.keys(cardObject).length < desiredLength) {
             const randomIndex = Math.floor(Math.random() * 25);
@@ -150,7 +149,7 @@ var generateAssignments = function(startingTeam) {
     };
 };
 
-var generateWordList = function() {
+let generateWordList = function() {
     let wordList = [];
 
     const fullList = wordData["list_1"].concat(wordData["list_2"]);
