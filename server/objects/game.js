@@ -10,6 +10,10 @@ const CARD_TYPES = {
     CIVILIAN: "civilian"
 };
 
+const BOARD_SIZE = 25;
+const FIRST_TEAM_CARDS = 9;
+const SECOND_TEAM_CARDS = 8;
+
 class Game extends BaseModel {
     constructor() {
         super();
@@ -105,7 +109,7 @@ class Game extends BaseModel {
     }
 };
 
-let pickStartingTeam = function() {
+function pickStartingTeam () {
     if (Math.random() < 0.5) {
         return "red";
     }
@@ -113,10 +117,10 @@ let pickStartingTeam = function() {
     return "blue";
 };
 
-let generateAssignments = function(startingTeam) {
+function generateAssignments (startingTeam) {
     let setTeamCards = function(cardObject, desiredLength) {
         while (Object.keys(cardObject).length < desiredLength) {
-            const randomIndex = Math.floor(Math.random() * 25);
+            const randomIndex = Math.floor(Math.random() * BOARD_SIZE);
             if (!usedIndices[randomIndex]) {
                 cardObject[randomIndex] = true;
                 usedIndices[randomIndex] = true;
@@ -127,16 +131,16 @@ let generateAssignments = function(startingTeam) {
     let redCards = {};
     let blueCards = {};
 
-    let redLength = 8;
-    let blueLength = 8;
+    let redLength = SECOND_TEAM_CARDS;
+    let blueLength = SECOND_TEAM_CARDS;
     if (startingTeam === "red") {
-        redLength = 9;
+        redLength = FIRST_TEAM_CARDS;
     } else {
-        blueLength = 9;
+        blueLength = FIRST_TEAM_CARDS;
     }
 
     let usedIndices = {};
-    const randomIndex = Math.floor(Math.random() * 25);
+    const randomIndex = Math.floor(Math.random() * BOARD_SIZE);
     const assassinCard = randomIndex;
     usedIndices[randomIndex] = true;
     setTeamCards(redCards, redLength);
@@ -149,13 +153,13 @@ let generateAssignments = function(startingTeam) {
     };
 };
 
-let generateWordList = function() {
+function generateWordList () {
     let wordList = [];
 
     const fullList = wordData["list_1"].concat(wordData["list_2"]);
 
     let usedIndices = {};
-    while (Object.keys(usedIndices).length < 25) {
+    while (Object.keys(usedIndices).length < BOARD_SIZE) {
         const randomIndex = Math.floor(Math.random() * fullList.length);
         if (!usedIndices[randomIndex]) {
             const tuple = fullList[randomIndex];
