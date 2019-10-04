@@ -1,27 +1,27 @@
-var Game = require('../objects/game');
+const Game = require('../objects/game');
 
-var gameHandler = {};
+class GameHandler {
+    static async createGameHandler(req, res, next) {
+        const authorId = res.locals.uid;
 
-gameHandler.createGameHandler = async function(req, res, next) {
-    var authorId = res.locals.uid;
+        let gameObj = new Game();
+        gameObj.init(authorId);
+        gameObj = await gameObj.save();
 
-    var gameObj = new Game();
-    gameObj.init(authorId);
-    gameObj = await gameObj.save();
-
-    var isCodeMaster = true;
-    res.send(gameObj.toApiJSON(isCodeMaster));
-};
-
-gameHandler.getGameHandler = async function(req, res, next) {
-    var gameId = req.query.gameId
-    var gameObj = await Game.load(gameId);
-    if (!gameObj) {
-        // return an error about invalid game id
+        const isCodeMaster = true;
+        res.send(gameObj.toApiJSON(isCodeMaster));
     }
 
-    var isCodeMaster = true;
-    res.send(gameObj.toApiJSON(isCodeMaster));
-};
+    static async getGameHandler(req, res, next) {
+        const gameId = req.query.gameId
+        const gameObj = await Game.load(gameId);
+        if (!gameObj) {
+            // return an error about invalid game id
+        }
 
-module.exports = gameHandler;
+        const isCodeMaster = true;
+        res.send(gameObj.toApiJSON(isCodeMaster));
+    }
+}
+
+module.exports = GameHandler;

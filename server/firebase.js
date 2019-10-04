@@ -1,38 +1,40 @@
-var admin = require("firebase-admin");
+"use strict";
 
-var serviceAccount = require("./keys/admin-keys.json");
-var databaseURL = "https://wordcodes-731c6.firebaseio.com";
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./keys/admin-keys.json");
+const databaseURL = "https://wordcodes-731c6.firebaseio.com";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: databaseURL
 });
 
-var db = admin.database();
-var auth = admin.auth();
-var ref = db.ref();
+const db = admin.database();
+const auth = admin.auth();
+const ref = db.ref();
 
-var firebaseRequests = {};
+class FirebaseRequests {
+    static async create(table, dataJSON) {
+        const createRef = ref.child(table);
+        dataJSON["createDate"] = (new Date).getTime() / 1000.0;
 
-firebaseRequests.create = async function(table, dataJSON) {
-    var createRef = ref.child(table);
-    dataJSON["createDate"] = (new Date).getTime() / 1000.0;
+        const result = await createRef.push(dataJSON);
 
-    var result = await createRef.push(dataJSON);
+        return result;
+    }
 
-    return result;
-};
+    static async read(table, uid) {
+        const readPath = table + "/" + uid;
 
-firebaseRequests.read = async function(table, uid) {
-    var readPath = table + "/" + uid;
+        const result = await ref.child(readPath).once('value');
+        return result;
+    }
 
-    var result = await ref.child(readPath).once('value');
-    return result;
-};
+    static async verifyIdToken(idToken) {
+        const tokenData = await auth.verifyIdToken(idToken);
+        return tokenData;
+    }
+}
 
-firebaseRequests.verifyIdToken = async function(idToken) {
-    var tokenData = await auth.verifyIdToken(idToken);
-    return tokenData;
-};
-
-module.exports = firebaseRequests;
+module.exports = FirebaseRequests;

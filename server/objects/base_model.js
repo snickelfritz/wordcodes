@@ -1,6 +1,6 @@
 "use strict";
 
-const firebaseRequests = require('../firebase.js')
+const FirebaseRequests = require('../firebase.js')
 
 class BaseModel {
     constructor() {
@@ -14,7 +14,7 @@ class BaseModel {
 
         const firebaseTable = this.getFirebaseTable();
         try {
-            objData = await firebaseRequests.read(firebaseTable, objId);
+            objData = await FirebaseRequests.read(firebaseTable, objId);
         }
         catch (error) {
             console.log(error);
@@ -40,7 +40,7 @@ class BaseModel {
         if (this.id) {
             // Update the existing game object
         } else {
-            const result = await firebaseRequests.create(firebaseTable, this.toFirebaseJSON());
+            const result = await FirebaseRequests.create(firebaseTable, this.toFirebaseJSON());
             this.id = result.key;
         }
 
