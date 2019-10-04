@@ -46,6 +46,19 @@ class BaseModel {
 
         return this;
     }
+
+    toFirebaseJSON() {
+        let firebaseJSON = {};
+        for (const [propName, value] of Object.entries(this)) {
+            if (propName === "id") {
+                continue;
+            }
+
+            firebaseJSON[propName] = value;
+        }
+
+        return firebaseJSON;
+    }
 }
 
 module.exports = BaseModel;

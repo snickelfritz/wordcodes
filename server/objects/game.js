@@ -69,18 +69,6 @@ class Game extends BaseModel {
         this.userAssignments[userRole] = userId;
     }
 
-    toFirebaseJSON() {
-        const firebaseJSON = {
-            "startingTeam": this.startingTeam,
-            "assignments": this.assignments,
-            "wordList": this.wordList,
-            "clueHistory": this.clueHistory,
-            "userAssignments": this.userAssignments
-        };
-
-        return firebaseJSON;
-    }
-
     toApiJSON(isCodeMaster) {
         let data = {
             "wordList": this.wordList,
